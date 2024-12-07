@@ -1,0 +1,822 @@
+<template>
+  <div>
+    <h1 class="text-center">Expenses Information</h1>
+    <form @submit.prevent="handleSubmit">
+      <table class="table">
+        <tbody>
+          <tr>
+            <td>Persons under age 65</td>
+            <td style="width: 30%">
+              <select v-model.number="under65Count" class="form-control">
+                <option v-for="n in 10" :key="n" :value="n">{{ n }}</option>
+              </select>
+            </td>
+            <td>State</td>
+            <td style="width: 30%">
+              <select v-model="state" class="form-control">
+                <option value="California">California</option>
+                <option value="New York">New York</option>
+                <option value="Texas">Texas</option>
+                <!-- Add other states as needed -->
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td>Persons above age 65</td>
+            <td>
+              <select v-model.number="above65Count" class="form-control">
+                <option v-for="n in 10" :key="n" :value="n">{{ n }}</option>
+              </select>
+            </td>
+            <td>County</td>
+            <td>
+              <select v-model="county" class="form-control">
+                <option value="County A">County A</option>
+                <option value="County B">County B</option>
+                <option value="County C">County C</option>
+                <!-- Add other counties as needed -->
+              </select>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Expense Category</th>
+            <th>Actual ($)</th>
+            <th>IRS Standards ($)</th>
+            <th>Allowable ($)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(expense, index) in expenses" :key="index">
+            <td>{{ expense.category }}</td>
+            <td>
+              <input
+                v-model.number="expense.actual"
+                @input="calculateAllowable(index)"
+                type="number"
+                class="form-control"
+              />
+            </td>
+            <td>
+              <input
+                :value="expense.irsStandard"
+                type="number"
+                class="form-control"
+                disabled
+              />
+            </td>
+            <td>
+              <input
+                :value="expense.allowable"
+                type="number"
+                class="form-control"
+                disabled
+              />
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Total</strong></td>
+            <td>
+              <strong>{{ totalActual }}$</strong>
+            </td>
+            <td></td>
+            <td>
+              Total Allowable: <strong>{{ totalAllowable }}$</strong>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Housing and Utilities</th>
+            <th>Actual ($)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(item, index) in housingUtilities" :key="index">
+            <td>{{ item.category }}</td>
+            <td>
+              <input
+                v-model.number="item.actual"
+                @input="calculateHousingAllowable"
+                type="number"
+                class="form-control"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Total Housing and Utilities Expenses</strong></td>
+            <td>
+              <strong>{{ totalHousingActual }}$</strong>
+            </td>
+          </tr>
+          <tr>
+            <td>IRS Standard</td>
+            <td>
+              <input
+                :value="housingIRSStandard"
+                type="number"
+                class="form-control"
+                disabled
+              />
+            </td>
+          </tr>
+          <tr>
+            <td>Allowable Expenses</td>
+            <td>
+              <input
+                :value="housingAllowable"
+                type="number"
+                class="form-control"
+                disabled
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Auto/Transportation Expenses</th>
+            <th>Actual ($)</th>
+            <th>IRS Standards ($)</th>
+            <th></th>
+            <th>Allowable ($)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <select v-model.number="numberOfVehicles" class="form-control">
+                <option v-for="n in 3" :key="n" :value="n">{{ n }}</option>
+              </select>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Public Transportation</td>
+            <td>
+              <input
+                v-model.number="publicTransport.actual"
+                @input="calculateAutoAllowable()"
+                type="number"
+                class="form-control"
+              />
+            </td>
+            <td>
+              <input
+                :value="publicTransport.irsStandard"
+                type="number"
+                class="form-control"
+                disabled
+              />
+            </td>
+            <td></td>
+            <td>
+              <input
+                :value="publicTransport.allowable"
+                type="number"
+                class="form-control"
+                disabled
+              />
+            </td>
+          </tr>
+          <tr v-for="vehicle in vehicles" :key="vehicle.id">
+            <td>Auto Ownership/Lease Cost ({{ vehicle.id }})</td>
+            <td>
+              <input
+                v-model.number="vehicle.actual"
+                @input="calculateAutoAllowable()"
+                type="number"
+                class="form-control"
+              />
+            </td>
+            <td>
+              <input
+                :value="vehicle.irsStandard"
+                type="number"
+                class="form-control"
+                disabled
+              />
+            </td>
+            <td>
+              <input
+                type="checkbox"
+                v-model="vehicle.additionalCost"
+                @change="calculateAutoAllowable()"
+              />
+              Add Additional Cost
+            </td>
+            <td>
+              <input
+                :value="vehicle.allowable"
+                type="number"
+                class="form-control"
+                disabled
+              />
+            </td>
+          </tr>
+          <tr v-if="numberOfVehicles > 0">
+            <td>
+              <input
+                v-model.number="autoExpenses.actual"
+                @input="calculateTotalActual()"
+                type="number"
+                class="form-control-2"
+                placeholder="Auto Expense"
+              />
+              +
+              <input
+                v-model.number="insuranceExpenses.actual"
+                @input="calculateTotalActual()"
+                type="number"
+                class="form-control-2"
+                placeholder="Insurance"
+              />
+            </td>
+            <td>
+              <strong>{{ totalActualExpense }}$</strong>
+            </td>
+            <td>
+              <input
+                :value="totalAutoIRSStandard"
+                type="number"
+                class="form-control"
+                disabled
+              />
+            </td>
+            <td></td>
+            <td>
+              <input
+                :value="totalAllowableAutoExpenses"
+                type="number"
+                class="form-control"
+                disabled
+              />
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Total Auto Expenses</strong></td>
+            <td>
+              <input
+                :value="totalAutoActual"
+                type="number"
+                class="form-control"
+                disabled
+              />
+            </td>
+            <td></td>
+            <td></td>
+            <td>
+              <strong>Total Allowable: {{ totalAutoAllowable }}$</strong>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Health Care</th>
+            <th>Actual ($)</th>
+            <th>IRS Standards ($)</th>
+            <th>Allowable ($)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Health Insurance Row -->
+          <tr>
+            <td>Health Insurance</td>
+            <td>
+              <input
+                v-model.number="healthInsurance.actual"
+                @input="calculateHealthCareAllowable"
+                type="number"
+                class="form-control"
+              />
+            </td>
+            <td></td>
+            <td>
+              <input
+                :value="healthInsurance.allowable"
+                type="number"
+                class="form-control"
+                disabled
+              />
+            </td>
+          </tr>
+
+          <!-- Prescription + Copays Row -->
+          <tr>
+            <td>
+              <input
+                v-model.number="prescription.actual"
+                @input="updatePrescriptionAndCopaysTotal"
+                type="number"
+                class="form-control-2"
+                placeholder="Prescription"
+              />
+              +
+              <input
+                v-model.number="copays.actual"
+                @input="updatePrescriptionAndCopaysTotal"
+                type="number"
+                class="form-control-2"
+                placeholder="Copays"
+              />
+              =
+            </td>
+            <td>
+              <input
+                :value="prescriptionCopaysTotal"
+                type="number"
+                class="form-control"
+                disabled
+              />
+            </td>
+            <td>
+              <input
+                :value="prescriptionCopaysIRSStandard"
+                type="number"
+                class="form-control"
+                disabled
+              />
+            </td>
+            <td>
+              <input
+                :value="prescriptionCopaysTotal"
+                type="number"
+                class="form-control"
+                disabled
+              />
+            </td>
+          </tr>
+
+          <!-- Empty Row -->
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+
+          <!-- Total Health Care Expenses Allowable -->
+          <tr>
+            <td><strong>Total Health Care Expenses Allowable</strong></td>
+            <td></td>
+            <td></td>
+            <td>
+              <strong>{{ totalHealthCareAllowable }}$</strong>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <!-- Taxes Table -->
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Taxes</th>
+            <th>Actual ($)</th>
+            <th>Allowable ($)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Total Federal, State, and Local Taxes Row -->
+          <tr>
+            <td>Total Federal, State, and Local Taxes</td>
+            <td>
+              <input
+                v-model.number="totalTaxes.actual"
+                @input="calculateTotalTaxesAllowable"
+                type="number"
+                class="form-control"
+              />
+            </td>
+            <td>
+              <input
+                :value="totalTaxes.allowable"
+                type="number"
+                class="form-control"
+                disabled
+              />
+            </td>
+          </tr>
+
+          <!-- Total Taxes Allowable -->
+          <tr>
+            <td><strong>Total Taxes Allowable</strong></td>
+            <td></td>
+            <td>
+              <strong>{{ totalTaxesAllowable }}$</strong>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Other Expenses Table -->
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Other Expenses</th>
+            <th>Actual ($)</th>
+            <th>Allowable ($)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Court Ordered Payments Row -->
+          <tr>
+            <td>Court Ordered Payments</td>
+            <td>
+              <input
+                v-model.number="otherExpenses.courtOrderedPayments.actual"
+                @input="calculateOtherExpensesAllowable"
+                type="number"
+                class="form-control"
+              />
+            </td>
+            <td>
+              <input
+                :value="otherExpenses.courtOrderedPayments.allowable"
+                type="number"
+                class="form-control"
+                disabled
+              />
+            </td>
+          </tr>
+
+          <!-- Child/Dependent Care Row -->
+          <tr>
+            <td>Child/Dependent Care</td>
+            <td>
+              <input
+                v-model.number="otherExpenses.childDependentCare.actual"
+                @input="calculateOtherExpensesAllowable"
+                type="number"
+                class="form-control"
+              />
+            </td>
+            <td>
+              <input
+                :value="otherExpenses.childDependentCare.allowable"
+                type="number"
+                class="form-control"
+                disabled
+              />
+            </td>
+          </tr>
+
+          <!-- Whole Life Insurance Policy Row -->
+          <tr>
+            <td>Whole Life Insurance Policy</td>
+            <td>
+              <input
+                v-model.number="otherExpenses.wholeLifeInsurance.actual"
+                @input="calculateOtherExpensesAllowable"
+                type="number"
+                class="form-control"
+              />
+            </td>
+            <td>
+              <input
+                :value="otherExpenses.wholeLifeInsurance.allowable"
+                type="number"
+                class="form-control"
+                disabled
+              />
+            </td>
+          </tr>
+
+          <!-- Term Life Insurance Policy Row -->
+          <tr>
+            <td>Term Life Insurance Policy</td>
+            <td>
+              <input
+                v-model.number="otherExpenses.termLifeInsurance.actual"
+                @input="calculateOtherExpensesAllowable"
+                type="number"
+                class="form-control"
+              />
+            </td>
+            <td>
+              <input
+                :value="otherExpenses.termLifeInsurance.allowable"
+                type="number"
+                class="form-control"
+                disabled
+              />
+            </td>
+          </tr>
+
+          <!-- Total Other Expenses Allowable -->
+          <tr>
+            <td><strong>Total Other Expenses Allowable</strong></td>
+            <td></td>
+            <td>
+              <strong>{{ totalOtherExpensesAllowable }}$</strong>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="form-buttons">
+        <button type="button" @click="prevPage" class="btn">Previous</button>
+        <button type="submit" class="btn">Next</button>
+      </div>
+    </form>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      
+      under65Count: 0,
+      above65Count: 0,
+      state: "California",
+      county: "County A",
+      expenses: [
+        { category: "Food", actual: 0, irsStandard: 0, allowable: 0 },
+        {
+          category: "Housekeeping Supplies",
+          actual: 0,
+          irsStandard: 0,
+          allowable: 0,
+        },
+        {
+          category: "Apparel and Services",
+          actual: 0,
+          irsStandard: 0,
+          allowable: 0,
+        },
+        { category: "Personal Care", actual: 0, irsStandard: 0, allowable: 0 },
+        { category: "Miscellaneous", actual: 0, irsStandard: 0, allowable: 0 },
+      ],
+      housingUtilities: [
+        { category: "1st Lien Mortgage", actual: 0 },
+        { category: "2nd Lien Mortgage", actual: 0 },
+        { category: "Rent Payment", actual: 0 },
+        { category: "Home Owner Insurance", actual: 0 },
+        { category: "Property Tax", actual: 0 },
+        { category: "Gas", actual: 0 },
+        { category: "Electricity", actual: 0 },
+        { category: "Water", actual: 0 },
+        { category: "Garbage and Trash", actual: 0 },
+        { category: "Telephone", actual: 0 },
+        { category: "Cable", actual: 0 },
+        { category: "Internet", actual: 0 },
+        { category: "Other Utilities", actual: 0 },
+      ],
+      numberOfVehicles: 0,
+      publicTransport: { actual: 0, irsStandard: 150, allowable: 0 },
+      vehicles: [],
+      autoExpenses: { actual: 0 },
+      insuranceExpenses: { actual: 0 },
+      healthInsurance: { actual: 0, allowable: 0 }, // No IRS Standard for health insurance
+      prescription: { actual: 0 }, // Prescription amount
+      copays: { actual: 0 }, // Copays amount
+      prescriptionCopaysIRSStandard: 150,
+      totalTaxes: { actual: 0, allowable: 0 },
+      otherExpenses: {
+        courtOrderedPayments: { actual: 0, allowable: 0 },
+        childDependentCare: { actual: 0, allowable: 0 },
+        wholeLifeInsurance: { actual: 0, allowable: 0 },
+        termLifeInsurance: { actual: 0, allowable: 0 },
+      },
+    };
+  },
+  computed: {
+    totalPeople() {
+      return this.under65Count + this.above65Count;
+    },
+    totalActual() {
+      const autoInsuranceActual =
+        this.numberOfVehicles > 0
+          ? parseFloat(this.autoExpenses.actual) +
+            parseFloat(this.insuranceExpenses.actual)
+          : 0;
+
+      return (
+        this.expenses.reduce((sum, expense) => sum + expense.actual, 0) +
+        autoInsuranceActual
+      ).toFixed(2);
+    },
+    totalAllowable() {
+      return this.expenses
+        .reduce((sum, expense) => sum + expense.allowable, 0)
+        .toFixed(2);
+    },
+    totalHousingActual() {
+      return Number(
+        this.housingUtilities.reduce((sum, expense) => sum + expense.actual, 0)
+      ).toFixed(2);
+    },
+    housingIRSStandard() {
+      const baseStandard = 300; // Example base value, customize as needed
+      return (baseStandard * this.totalPeople).toFixed(2);
+    },
+    housingAllowable() {
+      const totalActual = parseFloat(this.totalHousingActual);
+      const irsStandard = parseFloat(this.housingIRSStandard);
+      return totalActual > irsStandard ? irsStandard : totalActual;
+    },
+    totalAutoActual() {
+      let total = this.publicTransport.actual;
+
+      this.vehicles.forEach((vehicle) => {
+        total += vehicle.actual;
+      });
+
+      // Add auto expenses and insurance expenses to the total
+      if (this.numberOfVehicles > 0) {
+        total += this.autoExpenses.actual;
+        total += this.insuranceExpenses.actual;
+      }
+
+      return total.toFixed(2);
+    },
+    totalAutoAllowable() {
+      let total = this.publicTransport.allowable;
+      this.vehicles.forEach((vehicle) => {
+        total += vehicle.allowable;
+      });
+      return total.toFixed(2);
+    },
+    totalActualExpense() {
+      return (
+        parseFloat(this.autoExpenses.actual) +
+        parseFloat(this.insuranceExpenses.actual)
+      ).toFixed(2);
+    },
+    totalAutoIRSStandard() {
+      const baseStandard = 200; // Example base value, customize as needed
+      return (baseStandard * this.totalPeople).toFixed(2);
+    },
+    totalAllowableAutoExpenses() {
+      const totalIRSStandard = parseFloat(this.totalAutoIRSStandard);
+      const totalActual = parseFloat(this.totalAutoActual);
+      return totalActual > totalIRSStandard ? totalIRSStandard : totalActual;
+    },
+    prescriptionCopaysTotal() {
+      return (this.prescription.actual + this.copays.actual).toFixed(2);
+    },
+    totalHealthCareAllowable() {
+      return (
+        Math.min(this.healthInsurance.actual, Infinity) + // No IRS standard for health insurance
+        Math.min(
+          this.prescriptionCopaysTotal,
+          this.prescriptionCopaysIRSStandard
+        )
+      ).toFixed(2);
+    },
+    totalTaxesAllowable() {
+      return this.totalTaxes.actual; // Adjust calculation as needed
+    },
+    totalOtherExpensesAllowable() {
+      return (
+        this.otherExpenses.courtOrderedPayments.allowable +
+        this.otherExpenses.childDependentCare.allowable +
+        this.otherExpenses.wholeLifeInsurance.allowable +
+        this.otherExpenses.termLifeInsurance.allowable
+      ).toFixed(2);
+    },
+  },
+  watch: {
+    under65Count: "updateIRSStandards",
+    above65Count: "updateIRSStandards",
+    numberOfVehicles(newVal) {
+      this.updateVehicleRows(newVal);
+    },
+  },
+  methods: {
+    updateIRSStandards() {
+      this.expenses.forEach((expense, index) => {
+        expense.irsStandard = this.calculateIRSStandard(index);
+        this.calculateAllowable(index);
+      });
+    },
+    calculateIRSStandard(index) {
+      const baseStandard = 200; // Example base value, customize as needed
+      return baseStandard * this.totalPeople; // Adjust calculation as needed
+    },
+    calculateAllowable(index) {
+      const expense = this.expenses[index];
+      expense.allowable = Math.min(expense.actual, expense.irsStandard);
+    },
+    calculateHousingAllowable() {
+      // This method will be automatically triggered by computed properties
+    },
+    calculateAutoAllowable() {
+      this.publicTransport.allowable = Math.min(
+        this.publicTransport.actual,
+        this.publicTransport.irsStandard
+      );
+
+      this.vehicles.forEach((vehicle) => {
+        let irsStandard = vehicle.irsStandard;
+        if (vehicle.additionalCost) {
+          irsStandard += 200;
+        }
+        vehicle.allowable = Math.min(vehicle.actual, irsStandard);
+      });
+    },
+    updateVehicleRows(count) {
+      this.vehicles = Array.from({ length: count }, (_, i) => ({
+        id: i + 1,
+        actual: 0,
+        irsStandard: 300, // Example base standard value, customize as needed
+        additionalCost: false,
+        allowable: 0,
+      }));
+      this.calculateAutoAllowable();
+    },
+    calculateTotalActual() {
+      // This method updates the total actual expenses for auto and insurance
+    },
+    calculateHealthCareAllowable() {
+      this.healthInsurance.allowable = this.healthInsurance.actual; // No IRS standard comparison
+    },
+    updatePrescriptionAndCopaysTotal() {
+      // This method updates the total for prescription and copays
+      // `prescriptionCopaysTotal` is computed automatically based on prescription and copays actual values
+    },
+    calculateTotalTaxesAllowable() {
+      // Logic to calculate allowable taxes based on actual value
+      this.totalTaxes.allowable = this.totalTaxes.actual; // Adjust calculation as needed
+    },
+    calculateOtherExpensesAllowable() {
+      this.otherExpenses.courtOrderedPayments.allowable =
+        this.otherExpenses.courtOrderedPayments.actual; // Adjust calculation as needed
+      this.otherExpenses.childDependentCare.allowable =
+        this.otherExpenses.childDependentCare.actual; // Adjust calculation as needed
+      this.otherExpenses.wholeLifeInsurance.allowable =
+        this.otherExpenses.wholeLifeInsurance.actual; // Adjust calculation as needed
+      this.otherExpenses.termLifeInsurance.allowable =
+        this.otherExpenses.termLifeInsurance.actual; // Adjust calculation as needed
+    },
+    prevPage() {
+      this.$router.push("/tax-evaluation/income");
+    },
+    handleSubmit() {
+      this.$router.push("/tax-evaluation/tax-years");
+    },
+  },
+};
+</script>
+
+<style scoped>
+form {
+  margin: 0 10px;;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  max-width: 900px;
+}
+
+h1 {
+  margin-bottom: 20px;
+}
+
+.table {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.table th,
+.table td {
+  padding: 10px;
+  text-align: left;
+}
+
+.table th {
+  background-color: #f2f2f2;
+}
+
+.form-control {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.form-control-2 {
+  width: 40%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.form-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+</style>

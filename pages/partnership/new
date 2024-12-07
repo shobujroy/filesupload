@@ -1,0 +1,703 @@
+<template>
+  <div class="pb-6">
+    <h1 class="text-center">Partnership Program Application Form</h1>
+    <form @submit.prevent="handleSubmit">
+      <!-- Section 1: Basic Information -->
+      <v-expansion-panels v-model="expandedSections">
+        <v-expansion-panel>
+          <v-expansion-panel-header>
+            <span>Section 1: Basic Information</span>
+            <v-spacer></v-spacer>
+            <v-icon>
+              {{ expandedSections.includes(0) ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
+            </v-icon>
+          </v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <div class="form-group">
+              <label for="fullName">Full Name</label>
+              <input
+                type="text"
+                v-model="form.fullName"
+                id="fullName"
+                class="form-control"
+                placeholder="Enter Full Name"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="companyName">Company Name</label>
+              <input
+                type="text"
+                v-model="form.companyName"
+                id="companyName"
+                class="form-control"
+                placeholder="Enter Company Name"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="businessAddress">Business Address</label>
+              <input
+                type="text"
+                v-model="form.businessAddress"
+                id="businessAddress"
+                class="form-control"
+                placeholder="Enter Business Address"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="cityStateZip">City/State/Zip Code</label>
+              <input
+                type="text"
+                v-model="form.cityStateZip"
+                id="cityStateZip"
+                class="form-control"
+                placeholder="Enter City/State/Zip Code"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="phoneNumber">Phone Number</label>
+              <input
+                type="text"
+                v-model="form.phoneNumber"
+                id="phoneNumber"
+                class="form-control"
+                placeholder="Enter Phone Number"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="email">Email Address</label>
+              <input
+                type="email"
+                v-model="form.email"
+                id="email"
+                class="form-control"
+                placeholder="Enter Email Address"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="websiteUrl">Website URL</label>
+              <input
+                type="url"
+                v-model="form.websiteUrl"
+                id="websiteUrl"
+                class="form-control"
+                placeholder="Enter Website URL"
+              />
+            </div>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+
+        <!-- Section 2: Professional Credentials -->
+        <v-expansion-panel>
+          <v-expansion-panel-header>
+            <span>Section 2: Professional Credentials</span>
+            <v-spacer></v-spacer>
+            <v-icon>
+              {{ expandedSections.includes(1) ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
+            </v-icon>
+          </v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <div class="form-group">
+              <label>Are you a licensed tax professional?</label>
+              <select v-model="form.licensedTaxProfessional" class="form-control">
+                <option value="" disabled>Select</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="licenseType">Type of License/Certification</label>
+              <input
+                type="text"
+                v-model="form.licenseType"
+                id="licenseType"
+                class="form-control"
+                placeholder="Enter Type of License/Certification"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="licenseNumber">License Number</label>
+              <input
+                type="text"
+                v-model="form.licenseNumber"
+                id="licenseNumber"
+                class="form-control"
+                placeholder="Enter License Number"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="yearsExperience"
+                >Years of Experience in Tax Resolution Services</label
+              >
+              <input
+                type="number"
+                v-model="form.yearsExperience"
+                id="yearsExperience"
+                class="form-control"
+                placeholder="Enter Years of Experience"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="professionalAssociations"
+                >Professional Associations/Organizations</label
+              >
+              <textarea
+                v-model="form.professionalAssociations"
+                id="professionalAssociations"
+                class="form-control"
+                placeholder="List Professional Associations/Organizations"
+              ></textarea>
+            </div>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+
+        <!-- Section 3: Service Offerings -->
+        <v-expansion-panel>
+          <v-expansion-panel-header>
+            <span>Section 3: Service Offerings</span>
+            <v-spacer></v-spacer>
+            <v-icon>
+              {{ expandedSections.includes(2) ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
+            </v-icon>
+          </v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <div class="form-group">
+              <label
+                >What specific tax resolution services do you offer? (Select all that
+                apply)</label
+              >
+              <div class="checkbox-group">
+                <label
+                  ><input
+                    type="checkbox"
+                    v-model="form.services"
+                    value="Offer in Compromise"
+                  />
+                  Offer in Compromise</label
+                ><br />
+                <label
+                  ><input
+                    type="checkbox"
+                    v-model="form.services"
+                    value="Installment Agreements"
+                  />
+                  Installment Agreements</label
+                ><br />
+
+                <label
+                  ><input
+                    type="checkbox"
+                    v-model="form.services"
+                    value="Penalty Abatement"
+                  />
+                  Penalty Abatement</label
+                ><br />
+
+                <label
+                  ><input
+                    type="checkbox"
+                    v-model="form.services"
+                    value="Trust Formation"
+                  />
+                  Trust Formation</label
+                ><br />
+
+                <label
+                  ><input
+                    type="checkbox"
+                    v-model="form.services"
+                    value="Tax Consultation"
+                  />
+                  Tax Consultation</label
+                ><br />
+
+                <label
+                  ><input type="checkbox" v-model="form.services" value="Other" />
+                  Other</label
+                >
+              </div>
+              <input
+                v-if="form.services.includes('Other')"
+                type="text"
+                v-model="form.otherService"
+                class="form-control mt-2"
+                placeholder="Please specify"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="specialization"
+                >Do you specialize in any particular area?</label
+              >
+              <input
+                type="text"
+                v-model="form.specialization"
+                id="specialization"
+                class="form-control"
+                placeholder="Enter Specialization"
+              />
+            </div>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+
+        <!-- Section 4: Client Experience -->
+        <v-expansion-panel>
+          <v-expansion-panel-header>
+            <span>Section 4: Client Experience</span>
+            <v-spacer></v-spacer>
+            <v-icon>
+              {{ expandedSections.includes(3) ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
+            </v-icon>
+          </v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <div class="form-group">
+              <label for="clientAcquisition"
+                >How do you typically acquire clients? (Referral, Marketing Campaigns,
+                Direct Mailers, etc.)</label
+              >
+              <input
+                type="text"
+                v-model="form.clientAcquisition"
+                id="clientAcquisition"
+                class="form-control"
+                placeholder="Enter Client Acquisition Methods"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="clientCommunication"
+                >What is your approach to client communication and service? (Describe
+                how you build trust, handle pressure-free engagements, and maintain
+                client satisfaction.)</label
+              >
+              <textarea
+                v-model="form.clientCommunication"
+                id="clientCommunication"
+                class="form-control"
+                placeholder="Describe Your Approach to Client Communication and Service"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="activeClients"
+                >How many active clients do you currently manage?</label
+              >
+              <input
+                type="number"
+                v-model="form.activeClients"
+                id="activeClients"
+                class="form-control"
+                placeholder="Enter Number of Active Clients"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="ongoingClients"
+                >What percentage of your clients require ongoing tax resolution
+                services?</label
+              >
+              <input
+                type="number"
+                v-model="form.ongoingClients"
+                id="ongoingClients"
+                class="form-control"
+                placeholder="Enter Percentage of Ongoing Clients"
+              />
+            </div>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+
+        <!-- Section 5: Business Practices -->
+        <v-expansion-panel>
+          <v-expansion-panel-header>
+            <span>Section 5: Business Practices</span>
+            <v-spacer></v-spacer>
+            <v-icon>
+              {{ expandedSections.includes(4) ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
+            </v-icon>
+          </v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <div class="form-group">
+              <label for="engagementProcess"
+                >Describe your client engagement process.</label
+              >
+              <textarea
+                v-model="form.engagementProcess"
+                id="engagementProcess"
+                class="form-control"
+                placeholder="Describe Client Engagement Process"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="feeStructure">What is your typical fee structure?</label>
+              <textarea
+                v-model="form.feeStructure"
+                id="feeStructure"
+                class="form-control"
+                placeholder="Describe Fee Structure"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="performanceGuarantees"
+                >Do you offer any performance guarantees?</label
+              >
+              <select
+                v-model="form.performanceGuarantees"
+                id="performanceGuarantees"
+                class="form-control"
+              >
+                <option value="" disabled>Select</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+              </select>
+            </div>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+
+        <!-- Section 6: Partnership Alignment -->
+        <v-expansion-panel>
+          <v-expansion-panel-header>
+            <span>Section 6: Partnership Alignment</span>
+            <v-spacer></v-spacer>
+            <v-icon>
+              {{ expandedSections.includes(5) ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
+            </v-icon>
+          </v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <div class="form-group">
+              <label for="interestInPartnership"
+                >Why are you interested in joining this partnership program?</label
+              >
+              <textarea
+                v-model="form.interestInPartnership"
+                id="interestInPartnership"
+                class="form-control"
+                placeholder="Describe Your Interest in the Partnership Program"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="programAlignment"
+                >How does this program align with your business goals?</label
+              >
+              <textarea
+                v-model="form.programAlignment"
+                id="programAlignment"
+                class="form-control"
+                placeholder="Describe How the Program Aligns with Business Goals"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="expectations">What are your expectations from this program?</label>
+              <textarea
+                v-model="form.expectations"
+                id="expectations"
+                class="form-control"
+                placeholder="Describe Your Expectations"
+              ></textarea>
+            </div>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+
+        <!-- Section 7: Regional Coverage -->
+        <v-expansion-panel>
+          <v-expansion-panel-header>
+            <span>Section 7: Regional Coverage</span>
+            <v-spacer></v-spacer>
+            <v-icon>
+              {{ expandedSections.includes(6) ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
+            </v-icon>
+          </v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <div class="form-group">
+              <label for="regionalCoverage"
+                >What regions do you cover? (e.g., States, Counties, Cities)</label
+              >
+              <input
+                type="text"
+                v-model="form.regionalCoverage"
+                id="regionalCoverage"
+                class="form-control"
+                placeholder="Enter Regional Coverage"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="expansionPlans"
+                >Do you have any plans to expand your coverage in the near future?</label
+              >
+              <select
+                v-model="form.expansionPlans"
+                id="expansionPlans"
+                class="form-control"
+              >
+                <option value="" disabled>Select</option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+              </select>
+            </div>
+
+            <div v-if="form.expansionPlans === 'Yes'" class="form-group">
+              <label for="expansionDetails">If yes, please describe your plans.</label>
+              <textarea
+                v-model="form.expansionDetails"
+                id="expansionDetails"
+                class="form-control"
+                placeholder="Describe Expansion Plans"
+              ></textarea>
+            </div>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+
+        <!-- Section 8: References -->
+        <v-expansion-panel>
+          <v-expansion-panel-header>
+            <span>Section 8: References</span>
+            <v-spacer></v-spacer>
+            <v-icon>
+              {{ expandedSections.includes(7) ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
+            </v-icon>
+          </v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <div class="form-group">
+              <label for="reference1Name">Reference 1: Name</label>
+              <input
+                type="text"
+                v-model="form.reference1Name"
+                id="reference1Name"
+                class="form-control"
+                placeholder="Enter Reference 1 Name"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="reference1Company">Reference 1: Company</label>
+              <input
+                type="text"
+                v-model="form.reference1Company"
+                id="reference1Company"
+                class="form-control"
+                placeholder="Enter Reference 1 Company"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="reference1Relationship">Reference 1: Relationship</label>
+              <input
+                type="text"
+                v-model="form.reference1Relationship"
+                id="reference1Relationship"
+                class="form-control"
+                placeholder="Enter Reference 1 Relationship"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="reference1Phone">Reference 1: Phone Number</label>
+              <input
+                type="text"
+                v-model="form.reference1Phone"
+                id="reference1Phone"
+                class="form-control"
+                placeholder="Enter Reference 1 Phone Number"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="reference1Email">Reference 1: Email Address</label>
+              <input
+                type="email"
+                v-model="form.reference1Email"
+                id="reference1Email"
+                class="form-control"
+                placeholder="Enter Reference 1 Email Address"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="reference2Name">Reference 2: Name</label>
+              <input
+                type="text"
+                v-model="form.reference2Name"
+                id="reference2Name"
+                class="form-control"
+                placeholder="Enter Reference 2 Name"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="reference2Company">Reference 2: Company</label>
+              <input
+                type="text"
+                v-model="form.reference2Company"
+                id="reference2Company"
+                class="form-control"
+                placeholder="Enter Reference 2 Company"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="reference2Relationship">Reference 2: Relationship</label>
+              <input
+                type="text"
+                v-model="form.reference2Relationship"
+                id="reference2Relationship"
+                class="form-control"
+                placeholder="Enter Reference 2 Relationship"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="reference2Phone">Reference 2: Phone Number</label>
+              <input
+                type="text"
+                v-model="form.reference2Phone"
+                id="reference2Phone"
+                class="form-control"
+                placeholder="Enter Reference 2 Phone Number"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="reference2Email">Reference 2: Email Address</label>
+              <input
+                type="email"
+                v-model="form.reference2Email"
+                id="reference2Email"
+                class="form-control"
+                placeholder="Enter Reference 2 Email Address"
+              />
+            </div>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+
+        <!-- Section 9: Additional Information -->
+        <v-expansion-panel>
+          <v-expansion-panel-header>
+            <span>Section 9: Additional Information</span>
+            <v-spacer></v-spacer>
+            <v-icon>
+              {{ expandedSections.includes(8) ? 'mdi-chevron-up' : 'mdi-chevron-down' }}
+            </v-icon>
+          </v-expansion-panel-header>
+          <v-expansion-panel-content>
+            <div class="form-group">
+              <label for="additionalInformation"
+                >Is there any other information you would like to provide?</label
+              >
+              <textarea
+                v-model="form.additionalInformation"
+                id="additionalInformation"
+                class="form-control"
+                placeholder="Enter Additional Information"
+              ></textarea>
+            </div>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+      </v-expansion-panels>
+    </v-form>
+  </v-container>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      expandedSections: [],
+      form: {
+        // Basic Information
+        companyName: "",
+        contactName: "",
+        contactTitle: "",
+        contactPhone: "",
+        contactEmail: "",
+
+        // Professional Credentials
+        yearsInBusiness: "",
+        certifications: "",
+        professionalAssociations: "",
+
+        // Service Offerings
+        serviceTypes: [],
+        specialties: "",
+
+        // Client Experience
+        averageClientsServed: "",
+        clientRetentionRate: "",
+        ongoingClientPercentage: "",
+
+        // Business Practices
+        engagementProcess: "",
+        feeStructure: "",
+        performanceGuarantees: "",
+
+        // Partnership Alignment
+        interestInPartnership: "",
+        programAlignment: "",
+        expectations: "",
+
+        // Regional Coverage
+        regionalCoverage: "",
+        expansionPlans: "",
+        expansionDetails: "",
+
+        // References
+        reference1Name: "",
+        reference1Company: "",
+        reference1Relationship: "",
+        reference1Phone: "",
+        reference1Email: "",
+        reference2Name: "",
+        reference2Company: "",
+        reference2Relationship: "",
+        reference2Phone: "",
+        reference2Email: "",
+
+        // Additional Information
+        additionalInformation: "",
+      },
+    };
+  },
+  methods: {
+    toggleSection(index) {
+      const sectionIndex = this.expandedSections.indexOf(index);
+      if (sectionIndex >= 0) {
+        this.expandedSections.splice(sectionIndex, 1);
+      } else {
+        this.expandedSections.push(index);
+      }
+    },
+  },
+};
+</script>
+
+<style scoped>
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.v-expansion-panel-header {
+  background-color: #f5f5f5;
+  cursor: pointer;
+}
+
+.v-expansion-panel-content {
+  padding: 1rem;
+}
+
+.v-expansion-panel-header:hover {
+  background-color: #e0e0e0;
+}
+</style>

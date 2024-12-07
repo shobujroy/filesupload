@@ -1,0 +1,923 @@
+<template>
+  <div class="main-container" style="min-height: 85vh">
+    <div class="mid-container">
+      <div class="stepper-form">
+        <div class="tabs">
+          <div
+            v-for="(tab, index) in tabs"
+            :key="index"
+            :class="['tab', { active: currentStep === index }]"
+          >
+            {{ tab }}
+          </div>
+        </div>
+
+        <div class="form-content">
+          <!-- Basic Info Tab Content -->
+          <div v-if="currentStep === 0">
+            <div>
+              <label for="first-name">First Name</label>
+              <input
+                type="text"
+                id="first-name"
+                v-model="form.firstName"
+                @input="clearError('firstName')"
+              />
+              <span v-if="errors.firstName" class="error-message">{{
+                errors.firstName
+              }}</span>
+            </div>
+            <div>
+              <label for="last-name">Last Name</label>
+              <input
+                type="text"
+                id="last-name"
+                v-model="form.lastName"
+                @input="clearError('lastName')"
+              />
+              <span v-if="errors.lastName" class="error-message">{{
+                errors.lastName
+              }}</span>
+            </div>
+            <div>
+              <label for="email">Email</label>
+              <input
+                type="email"
+                id="email"
+                v-model="form.email"
+                @input="clearError('email')"
+              />
+              <span v-if="errors.email" class="error-message">{{
+                errors.email
+              }}</span>
+            </div>
+            <div>
+              <label for="zip-code">Zip/Postal Code</label>
+              <input
+                type="text"
+                id="zip-code"
+                v-model="form.zipCode"
+                @input="clearError('zipCode')"
+              />
+              <span v-if="errors.zipCode" class="error-message">{{
+                errors.zipCode
+              }}</span>
+            </div>
+            <div>
+              <label for="state">State</label>
+              <input
+                type="text"
+                id="state"
+                v-model="form.state"
+                @input="clearError('state')"
+              />
+              <span v-if="errors.state" class="error-message">{{
+                errors.state
+              }}</span>
+            </div>
+            <div>
+              <label for="country">Country</label>
+              <input
+                type="text"
+                id="country"
+                v-model="form.country"
+                @input="clearError('country')"
+              />
+              <span v-if="errors.country" class="error-message">{{
+                errors.country
+              }}</span>
+            </div>
+            <div>
+              <label for="household-members">Total Members of Household</label>
+              <input
+                type="number"
+                id="household-members"
+                v-model="form.householdMembers"
+                @input="clearError('householdMembers')"
+              />
+              <span v-if="errors.householdMembers" class="error-message">{{
+                errors.householdMembers
+              }}</span>
+            </div>
+            <div>
+              <label for="household-65plus">
+                Total Members of Household 65 Years or Older
+              </label>
+              <input
+                type="number"
+                id="household-65plus"
+                v-model="form.household65Plus"
+                @input="clearError('household65Plus')"
+              />
+              <span v-if="errors.household65Plus" class="error-message">{{
+                errors.household65Plus
+              }}</span>
+            </div>
+            <div>
+              <label for="irs-tax-debt">
+                Total IRS Tax Debt Including Penalties & Interest (Whole
+                Dollars)
+              </label>
+              <div class="dollar-input">
+                <span class="dollar-sign">$</span>
+                <input
+                  type="number"
+                  id="irs-tax-debt"
+                  v-model="form.irsTaxDebt"
+                  @input="clearError('irsTaxDebt')"
+                />
+              </div>
+              <span v-if="errors.irsTaxDebt" class="error-message">{{
+                errors.irsTaxDebt
+              }}</span>
+            </div>
+            <div>
+              <label for="tax-year">
+                Most Recent Tax Year You Are Requesting to Compromise
+              </label>
+              <input
+                type="text"
+                id="tax-year"
+                v-model="form.recentTaxYear"
+                @input="clearError('taxYear')"
+              />
+              <span v-if="errors.recentTaxYear" class="error-message">{{
+                errors.recentTaxYear
+              }}</span>
+            </div>
+          </div>
+
+          <!-- Assets Tab Content -->
+          <div v-if="currentStep === 1">
+            <div>
+              <label for="bank-balances">Total Bank Balances</label>
+              <div class="dollar-input">
+                <span class="dollar-sign">$</span>
+                <input
+                  type="number"
+                  id="bank-balances"
+                  v-model="form.bankBalances"
+                  @input="clearError('bankBalances')"
+                />
+              </div>
+              <span v-if="errors.bankBalances" class="error-message">{{
+                errors.bankBalances
+              }}</span>
+            </div>
+            <div>
+              <label for="home-market-value">Home Market Value</label>
+              <div class="dollar-input">
+                <span class="dollar-sign">$</span>
+                <input
+                  type="number"
+                  id="home-market-value"
+                  v-model="form.homeMarketValue"
+                  @input="clearError('homeMarketValue')"
+                />
+              </div>
+              <span v-if="errors.homeMarketValue" class="error-message">{{
+                errors.homeMarketValue
+              }}</span>
+            </div>
+            <div>
+              <label for="home-loan-balance">Home Loan Balance</label>
+              <div class="dollar-input">
+                <span class="dollar-sign">$</span>
+                <input
+                  type="number"
+                  id="home-loan-balance"
+                  v-model="form.homeLoanBalance"
+                  @input="clearError('homeLoanBalance')"
+                />
+              </div>
+              <span v-if="errors.homeLoanBalance" class="error-message">{{
+                errors.homeLoanBalance
+              }}</span>
+            </div>
+            <div>
+              <label for="vehicle1-equity">Vehicle 1 Equity</label>
+              <div class="dollar-input">
+                <span class="dollar-sign">$</span>
+                <input
+                  type="number"
+                  id="vehicle1-equity"
+                  v-model="form.vehicle1Equity"
+                  @input="clearError('vehicle1Equity')"
+                />
+              </div>
+              <span v-if="errors.vehicle1Equity" class="error-message">{{
+                errors.vehicle1Equity
+              }}</span>
+            </div>
+            <div>
+              <label for="vehicle2-equity">Vehicle 2 Equity</label>
+              <div class="dollar-input">
+                <span class="dollar-sign">$</span>
+                <input
+                  type="number"
+                  id="vehicle2-equity"
+                  v-model="form.vehicle2Equity"
+                  @input="clearError('vehicle2Equity')"
+                />
+              </div>
+              <span v-if="errors.vehicle2Equity" class="error-message">{{
+                errors.vehicle2Equity
+              }}</span>
+            </div>
+            <div>
+              <label for="retirement-account-equity">
+                Retirement Account Equity
+              </label>
+              <div class="dollar-input">
+                <span class="dollar-sign">$</span>
+                <input
+                  type="number"
+                  id="retirement-account-equity"
+                  v-model="form.retirementAccountEquity"
+                  @input="clearError('retirementAccountEquity')"
+                />
+              </div>
+              <span
+                v-if="errors.retirementAccountEquity"
+                class="error-message"
+                >{{ errors.retirementAccountEquity }}</span
+              >
+            </div>
+            <div>
+              <label for="real-property-equity">
+                Other Real Property Equity
+              </label>
+              <div class="dollar-input">
+                <span class="dollar-sign">$</span>
+                <input
+                  type="number"
+                  id="real-property-equity"
+                  v-model="form.realPropertyEquity"
+                  @input="clearError('realPropertyEquity')"
+                />
+              </div>
+              <span v-if="errors.realPropertyEquity" class="error-message">{{
+                errors.realPropertyEquity
+              }}</span>
+            </div>
+            <div>
+              <label for="other-asset-equity">Other Asset Equity</label>
+              <div class="dollar-input">
+                <span class="dollar-sign">$</span>
+                <input
+                  type="number"
+                  id="other-asset-equity"
+                  v-model="form.otherAssetEquity"
+                  @input="clearError('otherAssetEquity')"
+                />
+              </div>
+              <span v-if="errors.otherAssetEquity" class="error-message">{{
+                errors.otherAssetEquity
+              }}</span>
+            </div>
+            <div>
+              <label for="stocks-bonds">
+                Stocks, Bond and Other Investments
+              </label>
+              <div class="dollar-input">
+                <span class="dollar-sign">$</span>
+                <input
+                  type="number"
+                  id="stocks-bonds"
+                  v-model="form.stocksBonds"
+                  @input="clearError('stocksBonds')"
+                />
+              </div>
+              <span v-if="errors.stocksBonds" class="error-message">{{
+                errors.stocksBonds
+              }}</span>
+            </div>
+            <div>
+              <label for="miscellaneous">Miscellaneous</label>
+              <div class="dollar-input">
+                <span class="dollar-sign">$</span>
+                <input
+                  type="number"
+                  id="miscellaneous"
+                  v-model="form.miscellaneous"
+                  @input="clearError('miscellaneous')"
+                />
+              </div>
+              <span v-if="errors.miscellaneous" class="error-message">{{
+                errors.miscellaneous
+              }}</span>
+            </div>
+          </div>
+
+          <!-- Income Tab Content -->
+          <div v-if="currentStep === 2">
+            <div>
+              <label for="rent-mortgage-utilities">
+                Rent or Mortgage in Utilities
+              </label>
+              <div class="dollar-input">
+                <span class="dollar-sign">$</span>
+                <input
+                  type="number"
+                  id="rent-mortgage-utilities"
+                  v-model="form.rentMortgageUtilities"
+                  @input="clearError('rentMortgageUtilities')"
+                />
+              </div>
+              <span v-if="errors.rentMortgageUtilities" class="error-message">{{
+                errors.rentMortgageUtilities
+              }}</span>
+            </div>
+            <div>
+              <label for="total-vehicle-owned">Total Vehicles Owned</label>
+              <input
+                type="number"
+                id="total-vehicle-owned"
+                v-model="form.totalVehicleOwned"
+                @input="clearError('totalVehicleOwned')"
+              />
+              <span v-if="errors.totalVehicleOwned" class="error-message">{{
+                errors.totalVehicleOwned
+              }}</span>
+            </div>
+            <div>
+              <label for="vehicle1-payment"
+                >Vehicle 1 Loan or Lease Payment</label
+              >
+              <div class="dollar-input">
+                <span class="dollar-sign">$</span>
+                <input
+                  type="number"
+                  id="vehicle1-payment"
+                  v-model="form.vehicle1Payment"
+                  @input="clearError('vehicle1Payment')"
+                />
+              </div>
+              <span v-if="errors.vehicle1Payment" class="error-message">{{
+                errors.vehicle1Payment
+              }}</span>
+            </div>
+            <div>
+              <label for="vehicle2-payment"
+                >Vehicle 2 Loan or Lease Payment</label
+              >
+              <div class="dollar-input">
+                <span class="dollar-sign">$</span>
+                <input
+                  type="number"
+                  id="vehicle2-payment"
+                  v-model="form.vehicle2Payment"
+                  @input="clearError('vehicle2Payment')"
+                />
+              </div>
+              <span v-if="errors.vehicle2Payment" class="error-message">{{
+                errors.vehicle2Payment
+              }}</span>
+            </div>
+            <div>
+              <label for="vehicle-operating-costs"
+                >Vehicle Operating Costs</label
+              >
+              <div class="dollar-input">
+                <span class="dollar-sign">$</span>
+                <input
+                  type="number"
+                  id="vehicle-operating-costs"
+                  v-model="form.vehicleOperatingCosts"
+                  @input="clearError('vehicleOperatingCosts')"
+                />
+              </div>
+              <span v-if="errors.vehicleOperatingCosts" class="error-message">{{
+                errors.vehicleOperatingCosts
+              }}</span>
+            </div>
+            <div>
+              <label for="public-transportation-costs">
+                Public Transportation Costs
+              </label>
+              <div class="dollar-input">
+                <span class="dollar-sign">$</span>
+                <input
+                  type="number"
+                  id="public-transportation-costs"
+                  v-model="form.publicTransportationCosts"
+                  @input="clearError('publicTransportationCosts')"
+                />
+              </div>
+              <span
+                v-if="errors.publicTransportationCosts"
+                class="error-message"
+                >{{ errors.publicTransportationCosts }}</span
+              >
+            </div>
+            <div>
+              <label for="health-insurance-premiums">
+                Health Insurance Premiums
+              </label>
+              <div class="dollar-input">
+                <span class="dollar-sign">$</span>
+                <input
+                  type="number"
+                  id="health-insurance-premiums"
+                  v-model="form.healthInsurancePremiums"
+                  @input="clearError('healthInsurancePremiums')"
+                />
+              </div>
+              <span
+                v-if="errors.healthInsurancePremiums"
+                class="error-message"
+                >{{ errors.healthInsurancePremiums }}</span
+              >
+            </div>
+            <div>
+              <label for="life-insurance-premiums"
+                >Life Insurance Premiums</label
+              >
+              <div class="dollar-input">
+                <span class="dollar-sign">$</span>
+                <input
+                  type="number"
+                  id="life-insurance-premiums"
+                  v-model="form.lifeInsurancePremiums"
+                  @input="clearError('lifeInsurancePremiums')"
+                />
+              </div>
+              <span v-if="errors.lifeInsurancePremiums" class="error-message">{{
+                errors.lifeInsurancePremiums
+              }}</span>
+            </div>
+            <div>
+              <label for="taxes">Federal, State, and Local Taxes</label>
+              <div class="dollar-input">
+                <span class="dollar-sign">$</span>
+                <input
+                  type="number"
+                  id="taxes"
+                  v-model="form.taxes"
+                  @input="clearError('taxes')"
+                />
+              </div>
+              <span v-if="errors.taxes" class="error-message">{{
+                errors.taxes
+              }}</span>
+            </div>
+            <div>
+              <label for="court-ordered-payments">Court-Ordered Payments</label>
+              <div class="dollar-input">
+                <span class="dollar-sign">$</span>
+                <input
+                  type="number"
+                  id="court-ordered-payments"
+                  v-model="form.courtOrderedPayments"
+                  @input="clearError('courtOrderedPayments')"
+                />
+              </div>
+              <span v-if="errors.courtOrderedPayments" class="error-message">{{
+                errors.courtOrderedPayments
+              }}</span>
+            </div>
+            <div>
+              <label for="child-dependent-care-costs">
+                Child/Dependent Care Costs
+              </label>
+              <div class="dollar-input">
+                <span class="dollar-sign">$</span>
+                <input
+                  type="number"
+                  id="child-dependent-care-costs"
+                  v-model="form.childDependentCareCosts"
+                  @input="clearError('childDependentCareCosts')"
+                />
+              </div>
+              <span
+                v-if="errors.childDependentCareCosts"
+                class="error-message"
+                >{{ errors.childDependentCareCosts }}</span
+              >
+            </div>
+          </div>
+
+          <!-- Expenses Tab Content -->
+          <div v-if="currentStep === 3">
+            <div>
+              <label for="gross-wages">
+                Gross Wages Including Social Security, Pensions, Unemployment,
+                etc.
+              </label>
+              <div class="dollar-input">
+                <span class="dollar-sign">$</span>
+                <input
+                  type="number"
+                  id="gross-wages"
+                  v-model="form.grossWages"
+                  @input="clearError('grossWages')"
+                />
+              </div>
+              <span v-if="errors.grossWages" class="error-message">{{
+                errors.grossWages
+              }}</span>
+            </div>
+            <div>
+              <label for="interests-dividends">Interests and Dividends</label>
+              <div class="dollar-input">
+                <span class="dollar-sign">$</span>
+                <input
+                  type="number"
+                  id="interests-dividends"
+                  v-model="form.interestsDividends"
+                  @input="clearError('interestsDividends')"
+                />
+              </div>
+              <span v-if="errors.interestsDividends" class="error-message">{{
+                errors.interestsDividends
+              }}</span>
+            </div>
+            <div>
+              <label for="distributions">
+                Distributions from Partnerships, S-Corporations, etc.
+              </label>
+              <div class="dollar-input">
+                <span class="dollar-sign">$</span>
+                <input
+                  type="number"
+                  id="distributions"
+                  v-model="form.distributions"
+                  @input="clearError('distributions')"
+                />
+              </div>
+              <span v-if="errors.distributions" class="error-message">{{
+                errors.distributions
+              }}</span>
+            </div>
+            <div>
+              <label for="net-rental-income">Net Rental Income</label>
+              <div class="dollar-input">
+                <span class="dollar-sign">$</span>
+                <input
+                  type="number"
+                  id="net-rental-income"
+                  v-model="form.netRentalIncome"
+                  @input="clearError('netRentalIncome')"
+                />
+              </div>
+              <span v-if="errors.netRentalIncome" class="error-message">{{
+                errors.netRentalIncome
+              }}</span>
+            </div>
+            <div>
+              <label for="net-business-income">Net Business Income</label>
+              <div class="dollar-input">
+                <span class="dollar-sign">$</span>
+                <input
+                  type="number"
+                  id="net-business-income"
+                  v-model="form.netBusinessIncome"
+                  @input="clearError('netBusinessIncome')"
+                />
+              </div>
+              <span v-if="errors.netBusinessIncome" class="error-message">{{
+                errors.netBusinessIncome
+              }}</span>
+            </div>
+            <div>
+              <label for="child-support-received">Child Support Received</label>
+              <div class="dollar-input">
+                <span class="dollar-sign">$</span>
+                <input
+                  type="number"
+                  id="child-support-received"
+                  v-model="form.childSupportReceived"
+                  @input="clearError('childSupportReceived')"
+                />
+              </div>
+              <span v-if="errors.childSupportReceived" class="error-message">{{
+                errors.childSupportReceived
+              }}</span>
+            </div>
+            <div>
+              <label for="alimony-received">Alimony Received</label>
+              <div class="dollar-input">
+                <span class="dollar-sign">$</span>
+                <input
+                  type="number"
+                  id="alimony-received"
+                  v-model="form.alimonyReceived"
+                  @input="clearError('alimonyReceived')"
+                />
+              </div>
+              <span v-if="errors.alimonyReceived" class="error-message">{{
+                errors.alimonyReceived
+              }}</span>
+            </div>
+            <div>
+              <label for="additional-income">Additional Income</label>
+              <div class="dollar-input">
+                <span class="dollar-sign">$</span>
+                <input
+                  type="number"
+                  id="additional-income"
+                  v-model="form.additionalIncome"
+                  @input="clearError('additionalIncome')"
+                />
+              </div>
+              <span v-if="errors.additionalIncome" class="error-message">{{
+                errors.additionalIncome
+              }}</span>
+            </div>
+          </div>
+
+          <!-- Proposals Tab Content -->
+          <div v-if="currentStep === 4">
+            <table>
+              <tr>
+                <td>Tax Debt:</td>
+                <td>${{ form.taxDebt }}</td>
+              </tr>
+              <tr>
+                <td>Total Available Equity:</td>
+                <td>${{ form.totalAvailableEquity }}</td>
+              </tr>
+              <tr>
+                <td>Monthly Income:</td>
+                <td>${{ form.monthlyIncome }}</td>
+              </tr>
+              <tr>
+                <td>Allowable Monthly Expenses:</td>
+                <td>${{ form.allowableMonthlyExpenses }}</td>
+              </tr>
+              <tr>
+                <td>Total Remaining Income:</td>
+                <td>${{ form.totalRemainingIncome }}</td>
+              </tr>
+            </table>
+
+            <h3>Select Your Option</h3>
+            <table>
+              <tr>
+                <td>Option 1:</td>
+                <td>abc</td>
+              </tr>
+              <tr>
+                <td>Option 2:</td>
+                <td>abc</td>
+              </tr>
+            </table>
+          </div>
+
+          <!-- Navigation Buttons -->
+          <div class="buttons">
+            <button
+              @click="prevStep"
+              :disabled="currentStep === 0"
+              class="appointment-button"
+              style="max-width: 110px"
+            >
+              Previous
+            </button>
+            <button
+              v-if="currentStep < 4"
+              @click="nextStep"
+              class="appointment-button"
+              style="max-width: 80px"
+            >
+              Next
+            </button>
+            <button
+              v-if="currentStep === 4"
+              @click="startOver"
+              class="appointment-button"
+              style="max-width: 125px"
+            >
+              Start Over
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      currentStep: 0,
+      tabs: [
+        "Tax Information",
+        "Basic Info",
+        "Assets",
+        "Income",
+        "Expenses",
+        "Proposals",
+      ],
+      form: {
+        firstName: "",
+        lastName: "",
+        email: "",
+        zipCode: "",
+        state: "",
+        country: "",
+        householdMembers: 0,
+        householdMembers65Plus: 0,
+        irsTaxDebt: 0,
+        recentTaxYear: "",
+
+        bankBalances: 0,
+        homeMarketValue: 0,
+        homeLoanBalance: 0,
+        vehicle1Equity: 0,
+        vehicle2Equity: 0,
+        retirementAccountEquity: 0,
+        otherRealPropertyEquity: 0,
+        otherAssetEquity: 0,
+        stocksBonds: 0,
+        miscellaneous: 0,
+
+        rentMortgageUtilities: 0,
+        totalVehicleOwned: 0,
+        vehicle1Payment: 0,
+        vehicle2Payment: 0,
+        vehicleOperatingCosts: 0,
+        publicTransportationCosts: 0,
+        healthInsurancePremiums: 0,
+        lifeInsurancePremiums: 0,
+        taxes: 0,
+        courtOrderedPayments: 0,
+        childDependentCareCosts: 0,
+
+        grossWages: 0,
+        interestsDividends: 0,
+        distributions: 0,
+        netRentalIncome: 0,
+        netBusinessIncome: 0,
+        childSupportReceived: 0,
+        alimonyReceived: 0,
+        additionalIncome: 0,
+
+        taxDebt: 0,
+        totalAvailableEquity: 0,
+        monthlyIncome: 0,
+        allowableMonthlyExpenses: 0,
+        totalRemainingIncome: 0,
+      },
+      errors: {},
+    };
+  },
+
+  methods: {
+    prevStep() {
+      this.currentStep--;
+    },
+    nextStep() {
+      this.currentStep++;
+    },
+
+    startOver() {
+      this.currentStep = 0;
+      this.form = {
+        firstName: "",
+        lastName: "",
+        email: "",
+        zipCode: "",
+        state: "",
+        country: "",
+        householdMembers: 0,
+        householdMembers65Plus: 0,
+        irsTaxDebt: 0,
+        recentTaxYear: "",
+
+        bankBalances: 0,
+        homeMarketValue: 0,
+        homeLoanBalance: 0,
+        vehicle1Equity: 0,
+        vehicle2Equity: 0,
+        retirementAccountEquity: 0,
+        otherRealPropertyEquity: 0,
+        otherAssetEquity: 0,
+        stocksBonds: 0,
+        miscellaneous: 0,
+
+        rentMortgageUtilities: 0,
+        totalVehicleOwned: 0,
+        vehicle1Payment: 0,
+        vehicle2Payment: 0,
+        vehicleOperatingCosts: 0,
+        publicTransportationCosts: 0,
+        healthInsurancePremiums: 0,
+        lifeInsurancePremiums: 0,
+        taxes: 0,
+        courtOrderedPayments: 0,
+        childDependentCareCosts: 0,
+
+        grossWages: 0,
+        interestsDividends: 0,
+        distributions: 0,
+        netRentalIncome: 0,
+        netBusinessIncome: 0,
+        childSupportReceived: 0,
+        alimonyReceived: 0,
+        additionalIncome: 0,
+
+        taxDebt: 0,
+        totalAvailableEquity: 0,
+        monthlyIncome: 0,
+        allowableMonthlyExpenses: 0,
+        totalRemainingIncome: 0,
+        option1: "",
+        option2: "",
+      };
+      this.errors = {};
+    },
+    clearError(field) {
+      this.errors[field] = "";
+    },
+  },
+};
+</script>
+<style>
+.stepper-form {
+  margin: 70px auto;
+  max-width: 900px;
+}
+
+.tabs {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.tab {
+  padding: 10px 20px;
+  background-color: #ffb300;
+  border-radius: 5px;
+  cursor: default;
+}
+
+.tab.active {
+  font-weight: bold;
+}
+
+.error-message {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+  display: block;
+}
+
+.form-content {
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.form-content div {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="number"] {
+  width: calc(100% - 16px);
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.dollar-input {
+  display: flex;
+  align-items: center;
+}
+
+.dollar-sign {
+  margin-right: -15px;
+  z-index: 2;
+  font-size: 14px;
+  padding-left: 5px;
+}
+
+.dollar-input input[type="number"] {
+  padding-left: 20px;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-between;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+table td {
+  padding: 10px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+}
+</style>
